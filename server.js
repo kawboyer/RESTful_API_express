@@ -1,10 +1,12 @@
 // Dependencies
 const express = require('express');
 const app = express();
+const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 
 app.use(bodyParser.json());
+app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({
   extended: true
 }));
@@ -48,35 +50,38 @@ app.get('/node/:id', function(req, res) {
 });
 
 // Add a new node
-app.post('/nodes', function(req, res) {
-  let node_name = req.body.node_name;
+app.post('/node', function(req, res) {
 
-  if(!node_name) {
-    return res.status(400).send({ error: true, message: 'Please provide node name' });
-  }
-  mc.query('INSERT INTO nodes SET ?', { node_name: node_name }, function (error, results, fields) {
+  mc.query('INSERT INTO nodes SET ?', { 
+    node_name: req.body.node_name,
+    node_range_start: req.body.node_range_start,
+    node_range_end: req.body.node_range_end,
+    node_children: req.body.node_children
+  }, function (error, results, fields) {
     if (error) throw error;
     return res.send({ error: false, data: results, message: 'New node has been created succesfully!' });
   });
 });
 
 // Update node
-app.put('/node', function(req, res) {
-  let id = req.body.id;
-  let node_name = req.body.node_name;
+app.put('/node/:id', function(req, res) {
+  let id = req.params.id;
 
-  if ( !id || !node_name) {
-    return res.status(400).send({ error: node_name, message: 'Please provide node name and id'});
+  if (!id) {
+    return res.status(400).send({ error: node_name, message: 'Please provide id'});
   }
-  mc.query('UPDATE nodes SET node_name = ? id = ?', [node_name, id], function(error, results, fields) {
+  mc.query('UPDATE nodes SET node_name = ? WHERE id = ?', [
+    req.body.node_name,
+    id
+  ], function(error, results, fields) {
     if (error) throw error;
     return res.send({ error: false, data: results, message: 'Task has been updated succesfully' });
   });
 });
 
 // Delete node
-app.delete('/node', function(req, res) {
-  let id = req.body.id;
+app.delete('/node/:id', function(req, res) {
+  let id = req.params.id;
 
   if(!id) {
     return res.status(400).send({ error: true, message: 'Plesase provide id' });

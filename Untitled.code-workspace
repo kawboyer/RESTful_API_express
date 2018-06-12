@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "."
+		},
+		{
+			"path": "/Users/kb/sandbox/challenges/passport/outline-view-app_TESTING"
 		}
 	],
 	"settings": {}

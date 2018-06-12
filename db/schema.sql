@@ -7,7 +7,6 @@ USE outline_db;
 CREATE TABLE nodes (
 id INT NOT NULL AUTO_INCREMENT,
 node_name VARCHAR(200) NOT NULL,
--- node_status TINYINT(1) NOT NULL DEFAULT '1',
 node_range_start INT,
 node_range_end INT,
 node_children INT,
